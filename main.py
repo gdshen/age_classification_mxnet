@@ -44,8 +44,8 @@ if __name__ == '__main__':
     net.hybridize()
     trainer = gluon.Trainer(net.collect_params(), 'sgd', {'learning_rate': lr, 'momentum': mom, 'wd': weight_decay})
     # trainer = gluon.Trainer(net.collect_params(), 'Adam', {'learning_rate': lr})
-    data_iter = gluon.data.DataLoader(training_datasets, 10, shuffle=True, num_workers=4, last_batch='discard')
-    eval_iter = gluon.data.DataLoader(test_datasets, 10, shuffle=False, num_workers=4)
+    data_iter = gluon.data.DataLoader(training_datasets, 10, shuffle=True, num_workers=8, last_batch='discard')
+    eval_iter = gluon.data.DataLoader(test_datasets, 10, shuffle=False, num_workers=8, last_batch='discard')
 
     for epoch in range(1, epoches + 1):
         if epoch % 10 == 0:

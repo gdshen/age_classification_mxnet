@@ -20,7 +20,8 @@ class IMDBWIKIDatasets(gluon.data.Dataset):
             self.image_age_list = [[row[0], int(row[1])] for row in
                                    list(facereader)]  # age read from csv is in type str, should convert to int
 
-        shuffle(self.image_age_list)
+        if self.train:
+            shuffle(self.image_age_list)
 
     def __len__(self):
         return len(self.image_age_list)
