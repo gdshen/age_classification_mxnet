@@ -1,11 +1,12 @@
 import mxnet as mx
 from mxnet import gluon, autograd, nd, metric
-from mxnet.gluon.loss import L1Loss
+from mxnet.gluon.loss import L1Loss, L2Loss
 
 from data import AsianFaceDatasets, IMDBWIKIDatasets
 from model import Net
 
-epoches = 30
+import math
+epoches = 60
 lr = 0.001
 mom = 0.9
 weight_decay = 0.0005
@@ -15,6 +16,7 @@ model_ctx = mx.gpu(0)
 scale = nd.arange(0, 101, ctx=model_ctx).reshape((101, 1))
 
 l1_loss = L1Loss()
+# l1_loss = L2Loss()
 net = Net()
 
 # training_datasets = AsianFaceDatasets(csv_path='/home/gdshen/datasets/face/asian/train.csv',
@@ -38,7 +40,9 @@ def evaluate_accracy(data_iterator, net):
 
 
 if __name__ == '__main__':
-    net.output.collect_params().initialize(init=mx.init.Uniform(scale=0.022), ctx=model_ctx, force_reinit=False)
+    net.output.collect_params().initialize(init=mx.init.Uniform(scale=1/math.sqrt(2048)), ctx=model_ctx, force_reinit=False)
+    # net.collect_params().initialize(init=mx.init.Xavier(), ctx=model_ctx)
+    # net.load_params('/home/gdshen/datasets/mxnet_checkpoint/checkpoint-imdb-15.params', ctx=model_ctx)
     net.collect_params().reset_ctx(ctx=model_ctx)
     #
     net.hybridize()
@@ -63,6 +67,6 @@ if __name__ == '__main__':
             if batch_i % 100 == 0:
                 print(f'Epoch {epoch} batch {batch_i} loss {loss.asnumpy().mean()}')
         if epoch % 5 == 0:
-            net.save_params(f'/home/gdshen/datasets/mxnet_checkpoint/checkpoint-imdb-{epoch}.params')
+            net.save_params(f'/home/gdshen/datasets/mxnet_checkpoint/checkpoint-asian2-{epoch}.params')
         test_accuracy = evaluate_accracy(eval_iter, net)
         print(test_accuracy)

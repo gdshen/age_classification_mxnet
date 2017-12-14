@@ -8,6 +8,7 @@ class Net(HybridBlock):
         super().__init__(**kwargs)
         with self.name_scope():
             self.features = models.resnet50_v2(pretrained=True).features
+            # self.features = models.densenet121(pretrained=True)
             self.features.collect_params().setattr('lr_mult', 0.1)
             self.output = nn.Dense(units=101)
 
